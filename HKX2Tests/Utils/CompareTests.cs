@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
+﻿using HKX2E;
+using System.Diagnostics;
 using System.Xml.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace HKX2E.Tests;
+namespace HKX2ETests.Utils;
 
 [TestClass]
 public class CompareTests
@@ -192,10 +192,10 @@ public class CompareTests
         HavokXmlDeserializerOptions options =
             HavokXmlDeserializerOptions.IgnoreNonFatalErrors
             | HavokXmlDeserializerOptions.IgnoreMissingPointers;
-        HavokXmlPartialDeserializer deserializer = new(options);
+        HavokXmlDeserializer deserializer = new(options);
         var obj = deserializer.DeserializeRuntimeObject(element);
         RuntimePatcher.SetProperty(obj, "name", "piss");
-        HavokXmlPartialSerializer serializer = new();
+        HavokXmlSerializer serializer = new();
         XElement outelement = serializer.SerializeObject(obj);
         Debug.WriteLine(outelement.ToString());
     }
@@ -271,8 +271,8 @@ public class CompareTests
         var originalBytes = File.ReadAllBytes(tempInputFile);
         var finalBytes = File.ReadAllBytes(finalBinaryPath);
 
-        Assert.AreEqual(originalBytes.Length, finalBytes.Length, "File lengths are different.");
-        CollectionAssert.AreEqual(originalBytes, finalBytes, "Binary files are not identical.");
+        Assert.HasCount(originalBytes.Length, finalBytes, "File lengths are different.");
+        Assert.AreSequenceEqual(originalBytes, finalBytes, "Binary files are not identical.");
         TestContext.WriteLine("Assert complete: Files are identical.");
     }
 }
